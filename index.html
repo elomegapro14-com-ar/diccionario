@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LEXICON — Diccionario Retro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=VT323&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #f5f0e1;
+      --dark: #1a1208;
+      --brown: #5c3d1e;
+      --amber: #c8860a;
+      --red: #8b1a1a;
+      --green: #1a4a1a;
+      --paper: #ede8d5;
+      --ink: #2a1f0f;
+      --shadow: #b8a878;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--dark);
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(139,90,43,0.07) 28px, rgba(139,90,43,0.07) 29px),
+        repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(139,90,43,0.04) 28px, rgba(139,90,43,0.04) 29px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 60px;
+      font-family: 'Courier Prime', monospace;
+    }
+
+    /* ── SCANLINES OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.18) 3px,
+        rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── MASTHEAD ── */
+    .masthead {
+      text-align: center;
+      margin-bottom: 36px;
+      position: relative;
+    }
+
+    .masthead-top {
+      font-family: 'VT323', monospace;
+      color: var(--amber);
+      font-size: 13px;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      font-family: 'Special Elite', cursive;
+      font-size: clamp(52px, 10vw, 96px);
+      color: var(--cream);
+      letter-spacing: 14px;
+      text-transform: uppercase;
+      line-height: 1;
+      text-shadow:
+        4px 4px 0 var(--brown),
+        8px 8px 0 rgba(0,0,0,0.4);
+      position: relative;
+    }
+
+    h1 span {
+      color: var(--amber);
+    }
+
+    .masthead-sub {
+      font-family: 'Courier Prime', monospace;
+      font-style: italic;
+      color: var(--shadow);
+      font-size: 14px;
+      letter-spacing: 3px;
+      margin-top: 8px;
+    }
+
+    .divider {
+      width: 100%;
+      max-width: 700px;
+      height: 3px;
+      background: linear-gradient(to right, transparent, var(--amber), var(--red), var(--amber), transparent);
+      margin: 16px auto;
+      position: relative;
+    }
+
+    .divider::before, .divider::after {
+      content: '✦';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--amber);
+      font-size: 14px;
+    }
+    .divider::before { left: 30%; }
+    .divider::after  { right: 30%; }
+
+    /* ── MAIN CARD ── */
+    .card {
+      background: var(--paper);
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+        linear-gradient(170deg, #f0ead4 0%, #e8dfc8 100%);
+      border: 3px solid var(--brown);
+      border-radius: 2px;
+      max-width: 760px;
+      width: 100%;
+      padding: 36px 40px;
+      box-shadow:
+        6px 6px 0 var(--brown),
+        12px 12px 0 rgba(0,0,0,0.3),
+        inset 0 0 80px rgba(180,150,90,0.12);
+      position: relative;
+    }
+
+    /* corner ornaments */
+    .card::before, .card::after {
+      content: '✤';
+      position: absolute;
+      font-size: 22px;
+      color: var(--amber);
+      opacity: 0.6;
+    }
+    .card::before { top: 10px; left: 14px; }
+    .card::after  { bottom: 10px; right: 14px; }
+
+    /* ── SEARCH AREA ── */
+    .search-label {
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      color: var(--red);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0;
+      margin-bottom: 10px;
+    }
+
+    #searchInput {
+      flex: 1;
+      background: #fdf8ec;
+      border: 2px solid var(--brown);
+      border-right: none;
+      padding: 12px 18px;
+      font-family: 'Special Elite', cursive;
+      font-size: 22px;
+      color: var(--ink);
+      outline: none;
+      caret-color: var(--red);
+      box-shadow: inset 2px 2px 6px rgba(0,0,0,0.1);
+      transition: box-shadow 0.2s;
+    }
+
+    #searchInput:focus {
+      box-shadow: inset 2px 2px 6px rgba(0,0,0,0.15), 0 0 0 2px var(--amber);
+    }
+
+    #searchInput::placeholder {
+      color: #b8a878;
+      font-style: italic;
+    }
+
+    #searchBtn {
+      background: var(--red);
+      color: var(--cream);
+      border: 2px solid var(--brown);
+      padding: 12px 22px;
+      font-family: 'VT323', monospace;
+      font-size: 22px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.15s, transform 0.1s;
+      box-shadow: 3px 3px 0 var(--brown);
+    }
+
+    #searchBtn:hover  { background: var(--brown); }
+    #searchBtn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--brown); }
+
+    .lang-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: 1px solid var(--brown);
+      color: var(--brown);
+      font-family: 'VT323', monospace;
+      font-size: 15px;
+      letter-spacing: 2px;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .lang-btn.active, .lang-btn:hover {
+      background: var(--brown);
+      color: var(--cream);
+    }
+
+    /* ── RESULT ── */
+    #result {
+      min-height: 180px;
+      border-top: 2px dashed var(--shadow);
+      padding-top: 24px;
+      margin-top: 6px;
+    }
+
+    .result-word {
+      font-family: 'Special Elite', cursive;
+      font-size: 38px;
+      color: var(--ink);
+      letter-spacing: 2px;
+      line-height: 1.1;
+    }
+
+    .result-phonetic {
+      font-family: 'Courier Prime', monospace;
+      font-style: italic;
+      color: var(--brown);
+      font-size: 15px;
+      margin: 4px 0 14px;
+    }
+
+    .result-pos-block {
+      margin-bottom: 18px;
+    }
+
+    .result-pos {
+      display: inline-block;
+      background: var(--green);
+      color: var(--cream);
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      letter-spacing: 3px;
+      padding: 2px 10px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .result-def {
+      font-size: 16px;
+      color: var(--ink);
+      line-height: 1.7;
+      padding-left: 14px;
+      border-left: 3px solid var(--amber);
+      margin-bottom: 10px;
+    }
+
+    .result-def-num {
+      font-family: 'VT323', monospace;
+      color: var(--red);
+      font-size: 18px;
+      margin-right: 6px;
+    }
+
+    .result-example {
+      font-style: italic;
+      color: var(--brown);
+      font-size: 14px;
+      margin-top: 4px;
+      padding-left: 18px;
+    }
+
+    .result-example::before { content: '« '; }
+    .result-example::after  { content: ' »'; }
+
+    .result-synonyms {
+      margin-top: 16px;
+      padding: 10px 14px;
+      background: rgba(200,134,10,0.08);
+      border: 1px solid var(--amber);
+    }
+
+    .result-synonyms-label {
+      font-family: 'VT323', monospace;
+      color: var(--amber);
+      font-size: 15px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .synonym-tag {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid var(--brown);
+      color: var(--brown);
+      font-family: 'Courier Prime', monospace;
+      font-size: 13px;
+      padding: 2px 8px;
+      margin: 2px 3px 2px 0;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .synonym-tag:hover {
+      background: var(--brown);
+      color: var(--cream);
+    }
+
+    .error-msg {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .error-msg .big {
+      font-family: 'VT323', monospace;
+      font-size: 64px;
+      color: var(--red);
+      display: block;
+      animation: blink 1s step-start infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .error-msg p {
+      color: var(--brown);
+      font-style: italic;
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    /* loading */
+    .loading {
+      text-align: center;
+      padding: 50px 0;
+    }
+
+    .loading span {
+      display: inline-block;
+      font-family: 'VT323', monospace;
+      font-size: 40px;
+      color: var(--amber);
+      letter-spacing: 6px;
+      animation: loadpulse 1.2s ease-in-out infinite;
+    }
+
+    @keyframes loadpulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.2; }
+    }
+
+    /* placeholder state */
+    .placeholder-state {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--shadow);
+    }
+
+    .placeholder-state .big-icon {
+      font-size: 52px;
+      display: block;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
+    .placeholder-state p {
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      letter-spacing: 3px;
+    }
+
+    /* ── HISTORY ── */
+    .history-section {
+      max-width: 760px;
+      width: 100%;
+      margin-top: 28px;
+    }
+
+    .history-label {
+      font-family: 'VT323', monospace;
+      color: var(--shadow);
+      font-size: 14px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .history-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .history-tag {
+      background: rgba(245,240,225,0.06);
+      border: 1px solid rgba(245,240,225,0.15);
+      color: var(--shadow);
+      font-family: 'Courier Prime', monospace;
+      font-size: 13px;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border-radius: 0;
+    }
+
+    .history-tag:hover {
+      background: rgba(245,240,225,0.12);
+      color: var(--cream);
+      border-color: var(--amber);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 40px;
+      font-family: 'VT323', monospace;
+      color: rgba(184,168,120,0.4);
+      font-size: 14px;
+      letter-spacing: 4px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    /* ── FADE IN ── */
+    .fade-in {
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 520px) {
+      .card { padding: 24px 20px; }
+      h1 { letter-spacing: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-top">◆ Vol. XII — Edición Universal ◆</div>
+    <h1>LE<span>X</span>ICON</h1>
+    <div class="masthead-sub">— Diccionario Universal Ilustrado —</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- MAIN CARD -->
+  <div class="card">
+    <label class="search-label" for="searchInput">▸ Buscar palabra</label>
+
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn"        data-lang="es" onclick="setLang('es')">ES</button>
+      <button class="lang-btn"        data-lang="fr" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn"        data-lang="de" onclick="setLang('de')">DE</button>
+    </div>
+
+    <div class="search-row">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="p.ej. serendipity, amor, merveille…"
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+      />
+      <button id="searchBtn" onclick="search()">BUSCAR</button>
+    </div>
+
+    <div id="result">
+      <div class="placeholder-state">
+        <span class="big-icon">📖</span>
+        <p>Escriba una palabra para comenzar</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-section" id="historySection" style="display:none">
+    <div class="history-label">▸ Búsquedas recientes</div>
+    <div class="history-tags" id="historyTags"></div>
+  </div>
+
+  <footer>LEXICON © MMXXVI — Impreso en papel digital — Todos los derechos reservados</footer>
+
+<script>
+  // ── STATE ──
+  let currentLang = 'en';
+  const history = [];
+
+  // ── LANG ──
+  function setLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.lang === lang);
+    });
+    document.getElementById('searchInput').placeholder =
+      lang === 'es' ? 'p.ej. amor, serenidad, efímero…' :
+      lang === 'fr' ? 'p.ex. merveille, amour, lumière…' :
+      lang === 'de' ? 'z.B. Weltanschauung, Fernweh…' :
+      'e.g. serendipity, ephemeral, love…';
+  }
+
+  // ── ENTER KEY ──
+  document.getElementById('searchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') search();
+  });
+
+  // ── SEARCH ──
+  async function search(word) {
+    const input = document.getElementById('searchInput');
+    const query = (word || input.value).trim().toLowerCase();
+    if (!word) input.value = query;
+    if (!query) return;
+
+    showLoading();
+
+    try {
+      // Free Dictionary API (supports en, es, fr, de and more)
+      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/${currentLang}/${encodeURIComponent(query)}`);
+
+      if (!res.ok) throw new Error('not found');
+
+      const data = await res.json();
+      renderResult(data, query);
+      addHistory(query);
+    } catch {
+      showError(query);
+    }
+  }
+
+  // ── RENDER ──
+  function renderResult(data, query) {
+    const entry = data[0];
+    const word  = entry.word;
+    const phonetics = entry.phonetics?.find(p => p.text)?.text || '';
+    const meanings  = entry.meanings || [];
+
+    let html = `<div class="fade-in">`;
+    html += `<div class="result-word">${escH(word)}</div>`;
+    if (phonetics) html += `<div class="result-phonetic">${escH(phonetics)}</div>`;
+
+    meanings.forEach(m => {
+      html += `<div class="result-pos-block">`;
+      html += `<span class="result-pos">${escH(m.partOfSpeech)}</span>`;
+      m.definitions.slice(0, 3).forEach((def, i) => {
+        html += `<div class="result-def">
+          <span class="result-def-num">${i + 1}.</span>${escH(def.definition)}
+          ${def.example ? `<div class="result-example">${escH(def.example)}</div>` : ''}
+        </div>`;
+      });
+
+      const syns = m.synonyms?.slice(0, 8) || [];
+      if (syns.length) {
+        html += `<div class="result-synonyms">
+          <div class="result-synonyms-label">Sinónimos</div>
+          ${syns.map(s => `<span class="synonym-tag" onclick="search('${escA(s)}')">${escH(s)}</span>`).join('')}
+        </div>`;
+      }
+
+      html += `</div>`;
+    });
+
+    html += `</div>`;
+    document.getElementById('result').innerHTML = html;
+  }
+
+  // ── ERROR ──
+  function showError(query) {
+    document.getElementById('result').innerHTML = `
+      <div class="error-msg fade-in">
+        <span class="big">???</span>
+        <p>«${escH(query)}» no se encontró en el diccionario.</p>
+        <p style="margin-top:8px;font-size:13px;">Verifique la ortografía o intente en otro idioma.</p>
+      </div>`;
+  }
+
+  // ── LOADING ──
+  function showLoading() {
+    document.getElementById('result').innerHTML = `
+      <div class="loading"><span>BUSCANDO...</span></div>`;
+  }
+
+  // ── HISTORY ──
+  function addHistory(word) {
+    if (history.includes(word)) return;
+    history.unshift(word);
+    if (history.length > 12) history.pop();
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const section = document.getElementById('historySection');
+    const tags    = document.getElementById('historyTags');
+    section.style.display = 'block';
+    tags.innerHTML = history.map(w =>
+      `<span class="history-tag" onclick="search('${escA(w)}')">${escH(w)}</span>`
+    ).join('');
+  }
+
+  // ── UTILS ──
+  function escH(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function escA(s) {
+    return String(s).replace(/'/g,"\\'");
+  }
+</script>
+</body>
+</html>
